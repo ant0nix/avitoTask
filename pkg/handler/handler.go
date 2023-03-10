@@ -28,7 +28,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		services.GET("/show-balance", h.ShowBalance)
 		services.PUT("/p2p", h.P2p)
 		services.GET("/", h.ListServices)
-		services.POST("/new-order/:id", h.MakeOrder)
+		services.POST("/new-order", h.MakeOrder)
 		services.PATCH("/do-order/:id", h.DoOrder)
 	}
 	return router

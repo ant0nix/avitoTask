@@ -12,7 +12,6 @@ type Start interface {
 }
 
 type Service interface {
-	GetServicesPrice(id int) (int, error)
 	MakeOrder(order avitotask.Order) (string, error)
 	DoOrder(id int) (string, error)
 }

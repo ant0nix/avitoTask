@@ -26,10 +26,8 @@ type Service struct {
 }
 
 type Order struct {
-	Id     int `json:"-"`
-	SId    int `json:"-"`
-	UId    int `json:"uid"`
-	Amount int `json:"-"`
+	SId int `json:"sid" binding:"required"`
+	UId int `json:"uid" binding:"required"`
 }
 
 type Accounting struct {

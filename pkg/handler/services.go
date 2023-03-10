@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -16,7 +15,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	
+
 	err := h.services.Start.CreateUser(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -100,18 +99,6 @@ func (h *Handler) MakeOrder(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	id := c.Param("id")
-	tmp, err := strconv.Atoi(id)
-	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
-	}
-	input.SId = tmp
-	input.Amount, err = h.services.Service.GetServicesPrice(input.SId)
-	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	log.Println(input)
 	req, err := h.services.Service.MakeOrder(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -135,7 +122,6 @@ func (h *Handler) ListServices(c *gin.Context) {
 
 }
 
-//TODO: привязка по id юзера
 func (h *Handler) DoOrder(c *gin.Context) {
 	id := c.Param("id")
 	tmp, err := strconv.Atoi(id)
@@ -152,7 +138,3 @@ func (h *Handler) DoOrder(c *gin.Context) {
 	})
 
 }
-
-/*
-- отправка офера в фирму
-*/

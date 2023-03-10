@@ -24,24 +24,10 @@ func NewDoServicesRepository(db *sqlx.DB) *DoServicesStructRepository {
 	return &DoServicesStructRepository{db: db}
 }
 
-func (r *DoServicesStructRepository) GetServicesPrice(id int) (int, error) {
-	var service avitotask.Service
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1", servicesTable)
-	err := r.db.Get(&service, query, id)
-	if err != nil {
-		log.Println(err.Error())
-	}
-	if avitotask.IsEmptyStruct(service) {
-		return service.Price, errors.New(BadService)
-	} else {
-		return service.Price, nil
-	}
-}
-
 func (r *DoServicesStructRepository) CreateOrder(order avitotask.Order) (string, error) {
-	query := fmt.Sprintf("SELECT balance > $1 AS result FROM %s WHERE id = $2", userTable)
+	query := fmt.Sprintf("SELECT balance > (SELECT price FROM %s WHERE id = $1) AS result FROM %s WHERE id = $2", servicesTable, userTable)
 	var tmp []bool
-	if err := r.db.Select(&tmp, query, order.Amount, order.UId); err != nil {
+	if err := r.db.Select(&tmp, query, order.SId, order.UId); err != nil {
 		log.Println(err)
 	}
 	if len(tmp) == 0 {
@@ -61,6 +47,12 @@ func (r *DoServicesStructRepository) CreateOrder(order avitotask.Order) (string,
 	}
 }
 
-func (r *DoServicesStructRepository) DoOrder(id int) (string, error) {
-	return "", nil
+func (r *DoServicesStructRepository) DoOrders(id int) (string, error) {
+	query := fmt.Sprint("CALL do_order ($1)")
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		log.Printf("Error with CreateServices in repository/start_postgres. Error: %s", err.Error())
+		return InternalError, err
+	}
+	return "order sent", nil
 }

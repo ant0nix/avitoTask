@@ -11,9 +11,8 @@ type Start interface {
 	ShowServices() ([]avitotask.Service, error)
 }
 type Service interface {
-	GetServicesPrice(id int) (int, error)
 	CreateOrder(order avitotask.Order) (string, error)
-	DoOrder(id int) (string, error)
+	DoOrders(id int) (string, error)
 }
 
 type InternalService interface {
