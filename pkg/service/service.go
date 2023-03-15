@@ -5,6 +5,8 @@ import (
 	"github.com/ant0nix/avitoTask/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Start interface {
 	CreateUser(user avitotask.User) error
 	CreateServices(service avitotask.Service) error

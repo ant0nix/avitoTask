@@ -1,2 +1,6 @@
 .env
 .vscode
+.gitignore
+todo
+c.out
+coverage.html

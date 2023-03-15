@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -8,14 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func validate(in int) bool {
+	if in >= 0 {
+		return true
+	} else {
+		return false
+	}
+}
+
 func (h *Handler) CreateUser(c *gin.Context) {
 	var input avitotask.User
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
 		return
 	}
-
+	if !validate(input.Balance) || !validate(input.Reserved) {
+		newErrorResponse(c, http.StatusBadRequest, errors.New("negative values").Error())
+		return
+	}
 	err := h.services.Start.CreateUser(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -30,7 +42,7 @@ func (h *Handler) CreateUser(c *gin.Context) {
 func (h *Handler) ChangeBalance(c *gin.Context) {
 	var input avitotask.Balance
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
 		return
 	}
 	req, err := h.services.InternalServices.ChangeBalance(input)
@@ -47,7 +59,7 @@ func (h *Handler) ChangeBalance(c *gin.Context) {
 func (h *Handler) ShowBalance(c *gin.Context) {
 	var input avitotask.Balance
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
 		return
 	}
 	req, err := h.services.InternalServices.ShowBalance(input)
@@ -63,7 +75,11 @@ func (h *Handler) ShowBalance(c *gin.Context) {
 func (h *Handler) P2p(c *gin.Context) {
 	var input avitotask.P2p
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
+		return
+	}
+	if !validate(input.Amount) {
+		newErrorResponse(c, http.StatusBadRequest, errors.New("negative values").Error())
 		return
 	}
 	req, err := h.services.InternalServices.P2p(input)
@@ -79,7 +95,11 @@ func (h *Handler) P2p(c *gin.Context) {
 func (h *Handler) CreateServices(c *gin.Context) {
 	var input avitotask.Service
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
+		return
+	}
+	if !validate(input.Price) {
+		newErrorResponse(c, http.StatusBadRequest, errors.New("negative values").Error())
 		return
 	}
 	err := h.services.Start.CreateServices(input)
@@ -96,7 +116,7 @@ func (h *Handler) CreateServices(c *gin.Context) {
 func (h *Handler) MakeOrder(c *gin.Context) {
 	var input avitotask.Order
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad JSON").Error())
 		return
 	}
 	req, err := h.services.Service.MakeOrder(input)
@@ -126,7 +146,8 @@ func (h *Handler) DoOrder(c *gin.Context) {
 	id := c.Param("id")
 	tmp, err := strconv.Atoi(id)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		newErrorResponse(c, http.StatusBadRequest, errors.New("bad Params").Error())
+		return
 	}
 	req, err := h.services.Service.DoOrder(tmp)
 	if err != nil {
