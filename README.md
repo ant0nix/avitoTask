@@ -69,7 +69,12 @@
 
 # Сторонние библиотеки
 [Gin](github.com/gin-gonic/gin) v1.8.2
+
 [Assert](github.com/go-playground/assert/v2) v2.2.0
+
 [Mock](github.com/golang/mock) v1.6.0
+
 [SQLX](github.com/jmoiron/sqlx) v1.3.5
+
 [Viper](github.com/spf13/viper) v1.15.0
+
