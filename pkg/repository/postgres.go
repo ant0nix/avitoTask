@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -34,5 +35,6 @@ func NewPostgresDB(cfg DBConfig) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("PostgresDB started")
 	return db, err
 }
